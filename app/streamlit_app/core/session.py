@@ -5,14 +5,21 @@ import streamlit as st
 from core.api_client import APIError, DQXClient
 from core.auth import get_auth_context
 
+_MOCK = os.getenv("DQX_MOCK", "").lower() in ("1", "true", "yes")
+
 
 def init_session() -> None:
     """Bootstrap auth + API client. Called once per session in streamlit_app.py."""
     if "_dqx_client" not in st.session_state:
-        auth = get_auth_context()
-        base_url = os.getenv("DQX_API_BASE_URL", "http://localhost:8000")
-        st.session_state["_dqx_client"] = DQXClient(base_url=base_url, token=auth.token)
-        st.session_state["_dqx_auth_email"] = auth.email
+        if _MOCK:
+            from core.mock_client import DQXMockClient
+            st.session_state["_dqx_client"] = DQXMockClient()
+            st.session_state["_dqx_auth_email"] = "dev@mock.local"
+        else:
+            auth = get_auth_context()
+            base_url = os.getenv("DQX_API_BASE_URL", "http://localhost:8000")
+            st.session_state["_dqx_client"] = DQXClient(base_url=base_url, token=auth.token)
+            st.session_state["_dqx_auth_email"] = auth.email
 
 
 def get_client() -> DQXClient:
