@@ -1,5 +1,6 @@
 import streamlit as st
 
+from core.i18n import lang_selector
 from core.session import get_current_user, get_user_role, init_session, is_admin
 
 st.set_page_config(
@@ -23,6 +24,7 @@ email = user.get("email", st.session_state.get("_dqx_auth_email", ""))
 with st.sidebar:
     st.markdown(f"**{display_name}**")
     st.caption(f"{email} · {role.replace('_', ' ').title()}")
+    lang_selector(sidebar=True)
     st.divider()
 
 # ── Navigation pages ──────────────────────────────────────────────────────────
@@ -38,10 +40,12 @@ pages: dict = {
     "Operações": [
         st.Page("app_pages/drafts.py", title="Review & Aprovar", icon=":material/approval:"),
         st.Page("app_pages/results.py", title="Resultados DQ", icon=":material/analytics:"),
+        st.Page("app_pages/insights.py", title="DQ Insights", icon=":material/query_stats:"),
         st.Page("app_pages/runs_history.py", title="Histórico de Runs", icon=":material/history:"),
     ],
     "Ferramentas": [
         st.Page("app_pages/profiler.py", title="Profiler", icon=":material/troubleshoot:"),
+        st.Page("app_pages/assistant.py", title="Assistente DQX", icon=":material/smart_toy:"),
     ],
     "Conta": [
         st.Page("app_pages/profile.py", title="Perfil", icon=":material/person:"),

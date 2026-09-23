@@ -98,14 +98,86 @@ class DQXClient:
     def get_approvals_mode(self) -> dict:
         return self.get("/config/approvals-mode")
 
+    def update_approvals_mode(self, data: dict) -> dict:
+        return self.put("/config/approvals-mode", json=data)
+
     def get_run_review_statuses(self) -> dict:
         return self.get("/config/run-review-statuses")
+
+    def update_run_review_statuses(self, data: dict) -> dict:
+        return self.put("/config/run-review-statuses", json=data)
 
     def get_rules_registry_settings(self) -> dict:
         return self.get("/config/rules-registry-settings")
 
+    def update_rules_registry_settings(self, data: dict) -> dict:
+        return self.put("/config/rules-registry-settings", json=data)
+
     def get_global_results_settings(self) -> dict:
         return self.get("/config/global-results-settings")
+
+    def update_global_results_settings(self, data: dict) -> dict:
+        return self.put("/config/global-results-settings", json=data)
+
+    def get_timezone_settings(self) -> dict:
+        return self.get("/config/timezone")
+
+    def update_timezone_settings(self, data: dict) -> dict:
+        return self.put("/config/timezone", json=data)
+
+    def get_retention_settings(self) -> dict:
+        return self.get("/config/retention")
+
+    def update_retention_settings(self, data: dict) -> dict:
+        return self.put("/config/retention", json=data)
+
+    def get_compute_settings(self) -> dict:
+        return self.get("/config/compute")
+
+    def update_compute_settings(self, data: dict) -> dict:
+        return self.put("/config/compute", json=data)
+
+    def get_sample_limits(self) -> dict:
+        return self.get("/config/sample-limits")
+
+    def update_sample_limits(self, data: dict) -> dict:
+        return self.put("/config/sample-limits", json=data)
+
+    def get_draft_run_gate(self) -> dict:
+        return self.get("/config/draft-run-gate")
+
+    def update_draft_run_gate(self, data: dict) -> dict:
+        return self.put("/config/draft-run-gate", json=data)
+
+    def get_share_tables_settings(self) -> dict:
+        return self.get("/config/share-tables")
+
+    def update_share_tables_settings(self, data: dict) -> dict:
+        return self.put("/config/share-tables", json=data)
+
+    def list_compute_warehouses(self) -> list:
+        return self.get("/discovery/warehouses")
+
+    def list_compute_clusters(self) -> list:
+        return self.get("/discovery/clusters")
+
+    def list_custom_metrics(self) -> list:
+        return self.get("/config/custom-metrics")
+
+    def create_custom_metric(self, data: dict) -> dict:
+        return self.post("/config/custom-metrics", json=data)
+
+    def update_custom_metric(self, metric_id: str, data: dict) -> dict:
+        return self.put(f"/config/custom-metrics/{metric_id}", json=data)
+
+    def delete_custom_metric(self, metric_id: str) -> None:
+        self.delete(f"/config/custom-metrics/{metric_id}")
+
+    def reset_database(self) -> dict:
+        return self.post("/admin/reset-database")
+
+    def deploy_demo(self) -> dict:
+        return self.post("/admin/deploy-demo")
 
     # ── Discovery ─────────────────────────────────────────────────────────────
 
@@ -188,6 +260,21 @@ class DQXClient:
     def revert_monitored_table(self, binding_id: str) -> dict:
         return self.post(f"/monitored-tables/{binding_id}/revert")
 
+    def apply_rule_to_table(self, binding_id: str, rule_id: str) -> dict:
+        return self.post(f"/monitored-tables/{binding_id}/apply-rule", json={"rule_id": rule_id})
+
+    def remove_rule_from_table(self, binding_id: str, rule_id: str) -> dict:
+        return self.post(f"/monitored-tables/{binding_id}/remove-rule", json={"rule_id": rule_id})
+
+    def update_table_schedule(self, binding_id: str, data: dict) -> dict:
+        return self.put(f"/monitored-tables/{binding_id}/schedule", json=data)
+
+    def list_table_versions(self, binding_id: str) -> list:
+        return self.get(f"/monitored-tables/{binding_id}/versions")
+
+    def list_table_runs(self, binding_id: str) -> list:
+        return self.get("/dryrun/runs", params={"binding_id": binding_id})
+
     # ── Collections / Data Products ───────────────────────────────────────────
 
     def list_collections(self, **params) -> list:
@@ -216,6 +303,27 @@ class DQXClient:
 
     def reject_collection(self, product_id: str, rationale: str = "") -> dict:
         return self.post(f"/data-products/{product_id}/reject", json={"rationale": rationale})
+
+    def revert_collection(self, product_id: str) -> dict:
+        return self.post(f"/data-products/{product_id}/revert")
+
+    def list_collection_tables(self, product_id: str) -> list:
+        return self.get(f"/data-products/{product_id}/tables")
+
+    def add_table_to_collection(self, product_id: str, binding_id: str) -> dict:
+        return self.post(f"/data-products/{product_id}/tables", json={"binding_id": binding_id})
+
+    def remove_table_from_collection(self, product_id: str, binding_id: str) -> dict:
+        return self.delete(f"/data-products/{product_id}/tables/{binding_id}")
+
+    def update_collection_schedule(self, product_id: str, data: dict) -> dict:
+        return self.put(f"/data-products/{product_id}/schedule", json=data)
+
+    def list_collection_runs(self, product_id: str) -> list:
+        return self.get("/dryrun/runs", params={"product_id": product_id})
+
+    def list_collection_versions(self, product_id: str) -> list:
+        return self.get(f"/data-products/{product_id}/versions")
 
     # ── Dry Runs ──────────────────────────────────────────────────────────────
 
@@ -310,5 +418,72 @@ class DQXClient:
     def generate_checks(self, data: dict) -> dict:
         return self.post("/ai/generate-checks", json=data)
 
+    def ai_write_sql(self, data: dict) -> dict:
+        return self.post("/ai/write-sql", json=data)
+
+    def ai_improve_sql(self, data: dict) -> dict:
+        return self.post("/ai/improve-sql", json=data)
+
+    def ai_explain_sql(self, data: dict) -> dict:
+        return self.post("/ai/explain-sql", json=data)
+
     def list_ai_serving_endpoints(self) -> list:
         return self.get("/ai/serving-endpoints")
+
+    def check_rule_duplicates(self, data: dict) -> dict:
+        return self.post("/rules/check-duplicates", json=data)
+
+    def generate_rules_from_contract(self, data: dict) -> dict:
+        return self.post("/contract/generate-rules", json=data)
+
+    def export_registry_rules(self, rule_ids: list = None) -> str:
+        params = {"ids": ",".join(rule_ids)} if rule_ids else None
+        return self.get("/export/registry-rules", params=params)
+
+    def ai_chat(self, messages: list, endpoint: str = None) -> dict:
+        payload = {"messages": messages}
+        if endpoint:
+            payload["endpoint"] = endpoint
+        return self.post("/ai/chat", json=payload)
+
+    def submit_analytics_query(self, question: str, context: dict = None) -> dict:
+        return self.post("/ai/analytics-query", json={"question": question, "context": context or {}})
+
+    def get_analytics_query_status(self, job_id: str) -> dict:
+        return self.get(f"/ai/analytics-query/{job_id}")
+
+    def submit_analytics_feedback(self, job_id: str, rating: str, comment: str = "") -> dict:
+        return self.post("/ai/feedback", json={"job_id": job_id, "rating": rating, "comment": comment})
+
+    def list_mentionable_entities(self) -> dict:
+        return self.get("/ai/mentionable-entities")
+
+    # ── Permissões por objeto ─────────────────────────────────────────────────────
+
+    def list_object_grants(self, object_type: str, object_id: str) -> list:
+        return self.get(f"/permissions/{object_type}/{object_id}/grants")
+
+    def add_object_grant(self, object_type: str, object_id: str, data: dict) -> dict:
+        return self.put(f"/permissions/{object_type}/{object_id}/grants", json=data)
+
+    def remove_object_grant(self, object_type: str, object_id: str, principal: str) -> None:
+        self.delete(f"/permissions/{object_type}/{object_id}/grants/{principal}")
+
+    def search_principals(self, query: str) -> list:
+        return self.get("/principals/search", params={"q": query})
+
+    # ── Diff de revisão ───────────────────────────────────────────────────────────
+
+    def get_collection_review_changes(self, product_id: str) -> dict:
+        return self.get(f"/data-products/{product_id}/review-changes")
+
+    # ── Quarentena ────────────────────────────────────────────────────────────────
+
+    def get_quarantine_records(self, run_id: str, limit: int = 100) -> list:
+        return self.get(f"/quarantine/runs/{run_id}", params={"limit": limit})
+
+    def get_quarantine_count(self, run_id: str) -> dict:
+        return self.get(f"/quarantine/runs/{run_id}/count")
+
+    def export_quarantine(self, run_id: str) -> str:
+        return self.get(f"/quarantine/runs/{run_id}/export")
