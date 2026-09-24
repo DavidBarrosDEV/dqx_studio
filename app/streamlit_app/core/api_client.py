@@ -18,7 +18,7 @@ class DQXClient:
         self._session = requests.Session()
         self._session.headers.update(
             {
-                "X-Forwarded-Access-Token": token,
+                "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json",
                 "Accept": "application/json",
             }
