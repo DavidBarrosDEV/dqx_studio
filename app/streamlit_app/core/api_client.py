@@ -1,7 +1,10 @@
+import os
 from typing import Any, Optional
 
 import requests
 import streamlit as st
+
+_SSL_VERIFY = os.getenv("DQX_SSL_VERIFY", "true").lower() not in ("0", "false", "no")
 
 
 class APIError(Exception):
@@ -16,6 +19,7 @@ class DQXClient:
     def __init__(self, base_url: str, token: str):
         self._base = base_url.rstrip("/")
         self._session = requests.Session()
+        self._session.verify = _SSL_VERIFY
         self._session.headers.update(
             {
                 "Authorization": f"Bearer {token}",
