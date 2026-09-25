@@ -1,0 +1,26 @@
+# Databricks Apps — DQX Studio (Streamlit)
+#
+# Deploy via Databricks CLI:
+#   databricks apps deploy dqx-studio --source-code-path /Workspace/path/to/streamlit_app
+#
+# Or upload this directory via the Databricks Apps UI and set:
+#   Entry point: streamlit_app.py
+#
+# Required environment variables (configure in the Databricks Apps UI):
+#   DQX_API_BASE_URL  — base URL of the DQX Studio FastAPI backend, e.g. https://<workspace>/serving-endpoints/dqx-api
+#   DQX_MOCK          — set to "false" in production; "true" to use the built-in mock client
+
+command:
+  - streamlit
+  - run
+  - streamlit_app.py
+  - --server.port
+  - "8000"
+  - --server.address
+  - "0.0.0.0"
+  - --server.headless
+  - "true"
+  - --server.enableCORS
+  - "false"
+  - --server.enableXsrfProtection
+  - "false"
